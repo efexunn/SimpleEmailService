@@ -5,6 +5,7 @@ import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -28,7 +29,7 @@ public class EmailService {
 
 
     @Async
-    public void sendEmail(
+    public void sendTemplateEmail(
             String to,
             EmailTemplateName emailTemplateName,
             String userMessage,
@@ -62,5 +63,20 @@ public class EmailService {
 
 
 
+    }
+
+    @Async
+    public void sendTextEmail(String to,
+                              String subject,
+                              String userMessage
+    ) throws MessagingException {
+        SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
+
+        simpleMailMessage.setFrom(sender);
+        simpleMailMessage.setTo(to);
+        simpleMailMessage.setSubject(subject);
+        simpleMailMessage.setText(userMessage);
+
+        javaMailSender.send(simpleMailMessage);
     }
 }
